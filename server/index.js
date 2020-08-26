@@ -57,16 +57,14 @@ io.on('connection', (socket) => {
   });
 
   socket.on(CREATE_ROOM, ({
-    user,
     room = uuidv4()
   }) => {
+    const { user } = socket;
     console.log(`User ${user.id} is creating room ${room}`);
-    socket.user = user;
-    socket.room = room;
-
+    
     const testUser = {
       ...user,
-      id: '123456',
+      id: '2',
       firstName: 'Kristina',
       color: randomColor()
     };
@@ -74,6 +72,7 @@ io.on('connection', (socket) => {
     socket.join(room, (err) => {
       if (err === null) {
         console.log(`User ${user.id} created room ${room}`);
+        socket.room = room;
         // insert a new room in the db
         const newRoom = {
           id: room,
