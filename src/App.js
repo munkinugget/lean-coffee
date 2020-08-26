@@ -22,31 +22,31 @@ function App() {
   const { notes = [], users = [] } = state;
 
   return (
-    <Fragment>
+    <Container>
       <AppBar>
-        <Typography variant="h6" color="inherit">
-          Photos
-        </Typography>
-      </AppBar>
-      <Container>
-        <Box my={2}>
-
+        <Box m={1}>
+          <Typography variant="h6" color="inherit">
+            Lean Coffee
+          </Typography>
         </Box>
-      </Container>
-      <Button variant="contained" color="primary" onClick={createNote}>Add!</Button>
-      <UserAvatars users={users}/>
-      <Grid
-        container
-        direction="row"
-        justify="center"
-        alignItems="flex-start"
-        spacing={2}
-      >
-        {notes.map(({ id, owner, value }) => (
-          <Note id={id} owner={owner} value={value} key={id} />
-        ))}
-      </Grid>
-    </Fragment>
+      </AppBar>
+      
+      <Box mt={8}>
+        <Button variant="contained" color="primary" onClick={createNote}>Add!</Button>
+        <UserAvatars users={users}/>
+        <Grid
+          container
+          direction="row"
+          justify="center"
+          alignItems="flex-start"
+          spacing={2}
+        >
+          {notes.map(({ id, owner, value }) => (
+            <Note id={id} owner={owner} value={value} key={id} />
+          ))}
+        </Grid>
+      </Box>
+    </Container>
   );
 }
 

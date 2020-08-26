@@ -20,7 +20,7 @@
     "uuid": "^8.3.0"
   },
   "scripts": {
-    "serve": "npx nodemon server.js",
+    "serve": "npx nodemon server/index.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

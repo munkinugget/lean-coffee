@@ -54,7 +54,7 @@ function Note(props) {
         >
           {getInitials(owner)}
         </Avatar>
-        <div>
+        <Box p={2}>
           {
             owner.id === user.id ? (
               <TextField
@@ -63,12 +63,13 @@ function Note(props) {
                 rowsMax={8}
                 value={innerValue}
                 onChange={handleOnChange}
+                fullWidth
               />
             ) : (
               <div className={classes.postitBody}>{innerValue}</div>
             )
           }
-        </div>
+        </Box>
         {
           owner.id === user.id && (
             <div className={classes.postitControlBar}>
