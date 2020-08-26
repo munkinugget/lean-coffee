@@ -8,9 +8,12 @@ const randomColor = () => {
 
 export const socket = io();
 
-export const user = { id: '319837', firstName: 'Matt', lastName: 'Cavanaugh', color: randomColor() };
+export const user = { id: '1', firstName: 'Matt', lastName: 'Cavanaugh', color: randomColor() };
 
-export const room = 'AXSDF123';
+socket.on('connect', () => {
+  // dummy auth for dev
+  socket.emit('AUTH', user);
+});
 
 export const getInitials = (user) => {
   const { firstName, lastName } = user;

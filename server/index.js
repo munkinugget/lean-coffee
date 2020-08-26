@@ -26,6 +26,7 @@ app.get('/', function (req, res) {
 
 // Server actions accepted
 const VERBS = {
+  AUTH: 'AUTH',
   CREATE_ROOM: 'CREATE_ROOM',
   JOIN_ROOM: 'JOIN_ROOM',
   CREATE_NOTE: 'CREATE_NOTE',
@@ -41,6 +42,7 @@ const randomColor = () => {
 
 io.on('connection', (socket) => {
   const {
+    AUTH,
     CREATE_ROOM,
     JOIN_ROOM,
     UPDATE_NOTE,
@@ -49,13 +51,14 @@ io.on('connection', (socket) => {
     DELETE_NOTE
   } = VERBS;
 
-  socket.on('message', (data) => {
-    console.log(data);
+  socket.on(AUTH, (user) => {
+    console.log(`User ${user.id} has connected`);
+    socket.user = user;
   });
 
   socket.on(CREATE_ROOM, ({
     user,
-    room
+    room = uuidv4()
   }) => {
     console.log(`User ${user.id} is creating room ${room}`);
     socket.user = user;
@@ -87,7 +90,7 @@ io.on('connection', (socket) => {
               owner: testUser
             }
           ],
-          state: 'TOPICS'
+          view: 'TOPICS'
         };
 
         const existing = rooms.findOne({
@@ -106,21 +109,24 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on(JOIN_ROOM, ({
-    user,
-    room
-  }) => {
-    const {
-      id,
-      firstName
-    } = user;
+  socket.on(JOIN_ROOM, (room) => {
+    const { user } = socket;
+    console.log(`User ${user.id} is joining room ${room}`);
 
-    console.log(`User id: ${id} is attempting to join room ${room}`);
-    socket.user = user;
-    let rooms = Object.keys(socket.rooms);
-    console.log(rooms);
-    io.in(socket.room).emit(UPDATE_STATE, currentRoom);
-    socket.to(room).send(`${firstName} joined the room`);
+    socket.join(room, (err) => {
+      if (err === null) {
+        const existing = rooms.findOne({
+          id: room
+        });
+
+        if (!existing) {
+          console.log('Could not find the room!');
+        } else {
+          console.log('Existing room found');
+          io.in(room).emit(UPDATE_STATE, existing);
+        }
+      }
+    });
   });
 
   socket.on(UPDATE_NOTE, (note) => {
@@ -179,7 +185,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log(`User id: ${socket.user.id} has disconnected`);
+    console.log(`User id: ${socket.user && socket.user.id} has disconnected`);
   });
 });
 
